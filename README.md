@@ -10,4 +10,4 @@
 
 **GitHub Pages**
 
-* Посмотреть, как выглядит сайт можно [здесь](https://vladosrus.github.io/mesto-react/)
+* Посмотреть, как выглядит сайт можно [здесь](https://vladosrus.github.io/react-mesto-auth/)
