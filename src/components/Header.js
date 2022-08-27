@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, Switch, Route } from "react-router-dom";
 import header__logo from "../images/header__logo.svg";
 
 export default function Header(props) {
@@ -12,7 +12,33 @@ export default function Header(props) {
         />
       </a>
       <div className="header__container">
-        {props.children}
+        <Switch>
+          <Route exact path="/">
+            <p className="header__email">{props.email}</p>
+            <nav onClick={props.logout}>
+              <Link
+                to={"/sign-in"}
+                className="header__link header__link_type_exit"
+              >
+                Выйти
+              </Link>
+            </nav>
+          </Route>
+          <Route exact path="/sign-in">
+            <nav>
+              <Link to={"/sign-up"} className="header__link">
+                Регистрация
+              </Link>
+            </nav>
+          </Route>
+          <Route exact path="/sign-up">
+            <nav>
+              <Link to={"/sign-in"} className="header__link">
+                Войти
+              </Link>
+            </nav>
+          </Route>
+        </Switch>
       </div>
     </header>
   );

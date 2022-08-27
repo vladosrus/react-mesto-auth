@@ -96,7 +96,7 @@ export default function App() {
     setIsAddPlacePopupOpen(false);
     setIsImagePopupOpen(false);
     setIsDeleteCardPopupOpen(false);
-    
+
     setSelectedCard({});
 
     setIsRegistrationPopupOpen(false);
@@ -162,7 +162,7 @@ export default function App() {
     setLoggedIn(true);
     history.push("/");
   }
-  
+
   function unsuccessAction() {
     setRegistrationPopupImg(unSuccessImg);
     setRegistrationPopupText("Что-то пошло не так! Попробуйте ещё раз.");
@@ -212,18 +212,38 @@ export default function App() {
     }
   }
 
-  function MainPage() {
-    return (
-      <>
-        <Main
-          onEditProfile={handleEditProfileClick}
-          onEditAvatar={handleEditAvatarClick}
-          onAddPlace={handleAddPlaceClick}
-          onCardClick={handleCardClick}
-          cards={cards}
-          onCardLike={handleCardLike}
-          onDeleteCardClick={handleDeleteCardClick}
-        />
+  return (
+    <CurrentUserContext.Provider value={currentUser}>
+      <div className="page">
+        <Header email={userEmail} logout={handleLogout} />
+        <Switch>
+          <ProtectedRoute
+            exact
+            path="/"
+            loggedIn={loggedIn}
+            component={Main}
+            onEditProfile={handleEditProfileClick}
+            onEditAvatar={handleEditAvatarClick}
+            onAddPlace={handleAddPlaceClick}
+            onCardClick={handleCardClick}
+            cards={cards}
+            onCardLike={handleCardLike}
+            onDeleteCardClick={handleDeleteCardClick}
+          />
+          
+          <Route exact path="/sign-up">
+            <Register onRegistration={registration} />
+          </Route>
+
+          <Route exact path="/sign-in">
+            <Login onLogin={loginCheck} />
+          </Route>
+
+          <Route path="/">
+            {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
+          </Route>
+        </Switch>
+
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}
@@ -251,78 +271,12 @@ export default function App() {
           isOpen={isImagePopupOpen}
           onClose={closeAllPopups}
         />
-      </>
-    );
-  }
-
-  return (
-    <CurrentUserContext.Provider value={currentUser}>
-      <div className="page">
-        <Switch>
-          <Route exact path="/">
-            <Header>
-              <p className="header__email">{userEmail}</p>
-              <nav onClick={handleLogout}>
-                <Link
-                  to={"/sign-in"}
-                  className="header__link header__link_type_exit"
-                >
-                  Выйти
-                </Link>
-              </nav>
-            </Header>
-          </Route>
-          <Route exact path="/sign-in">
-            <Header>
-              <nav>
-                <Link to={"/sign-up"} className="header__link">
-                  Регистрация
-                </Link>
-              </nav>
-            </Header>
-          </Route>
-          <Route exact path="/sign-up">
-            <Header>
-              <nav>
-                <Link to={"/sign-in"} className="header__link">
-                  Войти
-                </Link>
-              </nav>
-            </Header>
-          </Route>
-        </Switch>
-        <Switch>
-          <ProtectedRoute
-            exact
-            path="/"
-            loggedIn={loggedIn}
-            component={MainPage}
-          />
-
-          <Route exact path="/sign-up">
-            <Register onRegistration={registration} />
-            <InfoTooltip
-              isOpen={isRegistrationPopupOpen}
-              onClose={closeAllPopups}
-              popupImg={registrationPopupImg}
-              popupText={registrationPopupText}
-            />
-          </Route>
-
-          <Route exact path="/sign-in">
-            <Login onLogin={loginCheck} />
-            <InfoTooltip
-              isOpen={isRegistrationPopupOpen}
-              onClose={closeAllPopups}
-              popupImg={registrationPopupImg}
-              popupText={registrationPopupText}
-            />
-          </Route>
-
-          <Route path="/">
-            {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
-          </Route>
-        </Switch>
+        <InfoTooltip
+          isOpen={isRegistrationPopupOpen}
+          onClose={closeAllPopups}
+          popupImg={registrationPopupImg}
+          popupText={registrationPopupText}
+        />
         <Footer />
       </div>
     </CurrentUserContext.Provider>
