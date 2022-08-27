@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import * as Auth from "../utils/Auth";
 
 export default function Register(props) {
   const [email, setEmail] = useState("");
@@ -15,20 +14,9 @@ export default function Register(props) {
   }
   function handleSubmit(evt) {
     evt.preventDefault();
-
-    Auth.registration(email, password)
-      .then((res) => {
-        setEmail("");
-        setPassword("");
-        props.onSuccessRegistration();
-        console.log(res);
-      })
-      .catch((err) => {
-        props.onUnSuccessRegistration();
-        setEmail("");
-        setPassword("");
-        console.log(err);
-      });
+    props.onRegistration(email, password);
+    setEmail("");
+    setPassword("");
   }
 
   return (

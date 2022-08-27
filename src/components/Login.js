@@ -1,5 +1,4 @@
 import { useState } from "react";
-import * as Auth from "../utils/Auth";
 
 export default function Login(props) {
   const [email, setEmail] = useState("");
@@ -14,19 +13,9 @@ export default function Login(props) {
   }
   function handleSubmit(evt) {
     evt.preventDefault();
-    Auth.authorization(email, password)
-      .then((res) => {
-        setEmail("");
-        setPassword("");
-        localStorage.setItem("token", res.token);
-        props.onLogin();
-      })
-      .catch((err) => {
-        props.onUnSuccessLogin();
-        setEmail("");
-        setPassword("");
-        console.log(err);
-      });
+    props.onLogin(email, password);
+    setEmail("");
+    setPassword("");
   }
   return (
     <section className="login">

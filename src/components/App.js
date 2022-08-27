@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import { Redirect, Route, useHistory, Switch } from "react-router-dom";
+import { Redirect, Route, useHistory, Switch, Link } from "react-router-dom";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -30,10 +30,8 @@ export default function App() {
   const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
 
   const [isRegistrationPopupOpen, setIsRegistrationPopupOpen] = useState(false);
-  const [registrationPopupImg, setRegistrationPopupImg] = useState(successImg);
-  const [registrationPopupText, setRegistrationPopupText] = useState(
-    "Вы успешно зарегистрировались!"
-  );
+  const [registrationPopupImg, setRegistrationPopupImg] = useState("");
+  const [registrationPopupText, setRegistrationPopupText] = useState("");
   const [userEmail, setUserEmail] = useState("");
 
   const [loggedIn, setLoggedIn] = useState(false);
@@ -41,15 +39,17 @@ export default function App() {
 
   useEffect(() => {
     tokenCheck();
-    Promise.all([api.getProfileInfo(), api.getInitialCards()])
-      .then(([currentUserInfo, initCards]) => {
-        setCurrentUser(currentUserInfo);
-        setCards(initCards);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+    if (loggedIn) {
+      Promise.all([api.getProfileInfo(), api.getInitialCards()])
+        .then(([currentUserInfo, initCards]) => {
+          setCurrentUser(currentUserInfo);
+          setCards(initCards);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, [loggedIn]);
 
   function handleCardLike(card) {
     //Проверка, есть ли уже лайк на этой карточке
@@ -90,24 +90,18 @@ export default function App() {
     setIsImagePopupOpen(true);
   }
 
-  function handleRegistrationClick() {
-    setIsRegistrationPopupOpen(true);
-  }
-
-  function handleUnsuccessRegistrationClick() {
-    setRegistrationPopupImg(unSuccessImg);
-    setRegistrationPopupText("Что-то пошло не так! Попробуйте ещё раз.");
-    setIsRegistrationPopupOpen(true);
-  }
-
   function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsImagePopupOpen(false);
     setIsDeleteCardPopupOpen(false);
-    setIsRegistrationPopupOpen(false);
+    
     setSelectedCard({});
+
+    setIsRegistrationPopupOpen(false);
+    setRegistrationPopupImg("");
+    setRegistrationPopupText("");
   }
 
   function handleUpdateUser(data) {
@@ -157,35 +151,70 @@ export default function App() {
       });
   }
 
-  function handleLogin() {
+  function successRegistration() {
+    setRegistrationPopupImg(successImg);
+    setRegistrationPopupText("Вы успешно зарегистрировались!");
+    setIsRegistrationPopupOpen(true);
+    history.push("/sign-in");
+  }
+
+  function successLogin() {
     setLoggedIn(true);
-    history.push("/mesto");
+    history.push("/");
+  }
+  
+  function unsuccessAction() {
+    setRegistrationPopupImg(unSuccessImg);
+    setRegistrationPopupText("Что-то пошло не так! Попробуйте ещё раз.");
+    setIsRegistrationPopupOpen(true);
   }
 
   function handleLogout() {
     localStorage.removeItem("token");
   }
 
+  function registration(email, password) {
+    Auth.registration(email, password)
+      .then((res) => {
+        successRegistration();
+        console.log(res);
+      })
+      .catch((err) => {
+        unsuccessAction();
+        console.log(err);
+      });
+  }
+
+  function loginCheck(email, password) {
+    Auth.authorization(email, password)
+      .then((res) => {
+        setUserEmail(email);
+        localStorage.setItem("token", res.token);
+        successLogin();
+      })
+      .catch((err) => {
+        unsuccessAction();
+        console.log(err);
+      });
+  }
+
   function tokenCheck() {
     const token = localStorage.getItem("token");
     if (token) {
-      Auth.getEmail(token).then((res) => {
-        setUserEmail(res.data.email);
-        handleLogin();
-      });
+      Auth.getEmail(token)
+        .then((res) => {
+          setUserEmail(res.data.email);
+          successLogin();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   }
 
-  function Mesto() {
+  function MainPage() {
     return (
       <>
-        <Header
-          component={Header}
-          userEmail={userEmail}
-          headerButtonText={"Выйти"}
-          headerButtonLink={"/sign-in"}
-          onLogout={handleLogout}
-        />
         <Main
           onEditProfile={handleEditProfileClick}
           onEditAvatar={handleEditAvatarClick}
@@ -195,7 +224,6 @@ export default function App() {
           onCardLike={handleCardLike}
           onDeleteCardClick={handleDeleteCardClick}
         />
-        <Footer />
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}
@@ -231,19 +259,48 @@ export default function App() {
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <Switch>
+          <Route exact path="/">
+            <Header>
+              <p className="header__email">{userEmail}</p>
+              <nav onClick={handleLogout}>
+                <Link
+                  to={"/sign-in"}
+                  className="header__link header__link_type_exit"
+                >
+                  Выйти
+                </Link>
+              </nav>
+            </Header>
+          </Route>
+          <Route exact path="/sign-in">
+            <Header>
+              <nav>
+                <Link to={"/sign-up"} className="header__link">
+                  Регистрация
+                </Link>
+              </nav>
+            </Header>
+          </Route>
+          <Route exact path="/sign-up">
+            <Header>
+              <nav>
+                <Link to={"/sign-in"} className="header__link">
+                  Войти
+                </Link>
+              </nav>
+            </Header>
+          </Route>
+        </Switch>
+        <Switch>
           <ProtectedRoute
             exact
-            path="/mesto"
+            path="/"
             loggedIn={loggedIn}
-            component={Mesto}
+            component={MainPage}
           />
 
           <Route exact path="/sign-up">
-            <Header headerButtonText={"Войти"} headerButtonLink={"/sign-in"} />
-            <Register
-              onSuccessRegistration={handleRegistrationClick}
-              onUnSuccessRegistration={handleUnsuccessRegistrationClick}
-            />
+            <Register onRegistration={registration} />
             <InfoTooltip
               isOpen={isRegistrationPopupOpen}
               onClose={closeAllPopups}
@@ -253,14 +310,7 @@ export default function App() {
           </Route>
 
           <Route exact path="/sign-in">
-            <Header
-              headerButtonText={"Регистрация"}
-              headerButtonLink={"/sign-up"}
-            />
-            <Login
-              onLogin={handleLogin}
-              onUnSuccessLogin={handleUnsuccessRegistrationClick}
-            />
+            <Login onLogin={loginCheck} />
             <InfoTooltip
               isOpen={isRegistrationPopupOpen}
               onClose={closeAllPopups}
@@ -270,9 +320,10 @@ export default function App() {
           </Route>
 
           <Route path="/">
-            {loggedIn ? <Redirect to="/mesto" /> : <Redirect to="/sign-in" />}
+            {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
           </Route>
         </Switch>
+        <Footer />
       </div>
     </CurrentUserContext.Provider>
   );
