@@ -1,4 +1,4 @@
-.login__submit-button {
+.entrance-pages__submit-button {
   margin: 216px 0px 0px;
   padding: 0px;
   border: none;
@@ -6,12 +6,20 @@
   min-height: 50px;
   background-color: #ffffff;
   border-radius: 2px;
-  font-style: normal;
   font-weight: 400;
   font-size: 18px;
   line-height: 22px;
   cursor: pointer;
 }
-.login__submit-button:hover {
+.entrance-pages__submit-button:hover {
   opacity: 0.85;
+}
+
+@media (max-width: 418px) {
+  .entrance-pages__submit-button {
+    min-width: 260px;
+    margin-top: 173px;
+    font-size: 16px;
+    line-height: 19px;
+  }
 }

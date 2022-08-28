@@ -20,17 +20,17 @@ export default function Register(props) {
   }
 
   return (
-    <section className="sign-up">
-      <h2 className="sign-up__title">Регистрация</h2>
+    <section className="entrance-pages">
+      <h2 className="entrance-pages__title">Регистрация</h2>
       <form
-        className="sign-up__form"
+        className="entrance-pages__form"
         name="sign-up"
         id="sign-upform"
         onSubmit={handleSubmit}
       >
         <input
           id="sign-up-email"
-          className="sign-up__input sign-up__input_named_email"
+          className="entrance-pages__input sign-up__input_named_email"
           type="email"
           placeholder="Email"
           required
@@ -41,7 +41,7 @@ export default function Register(props) {
         />
         <input
           id="sign-up-password"
-          className="sign-up__input sign-up__input_named_password"
+          className="entrance-pages__input sign-up__input_named_password"
           type="password"
           placeholder="Пароль"
           required
@@ -50,13 +50,16 @@ export default function Register(props) {
           value={password || ""}
           onChange={handleChange}
         />
-        <button className="sign-up__submit-button" type="submit">
+        <button
+          className="entrance-pages__submit-button sign-up__submit-button"
+          type="submit"
+        >
           Зарегистрироваться
         </button>
       </form>
-      <p className="sign-up__caption">
+      <p className="entrance-pages__caption">
         Уже зарегистрированы?{" "}
-        <Link to="/sign-in" className="sign-up__link">
+        <Link to="/sign-in" className="entrance-pages__link">
           Войти
         </Link>
       </p>

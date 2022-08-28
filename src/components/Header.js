@@ -1,7 +1,14 @@
+import { useEffect } from "react";
 import { Link, Switch, Route } from "react-router-dom";
 import header__logo from "../images/header__logo.svg";
+import useWindowDimensions from "../utils/useWindowDimensions";
 
 export default function Header(props) {
+  const { height, width } = useWindowDimensions();
+
+  useEffect(() => {
+  }, [width<418])
+
   return (
     <header className="header">
       <a href="/">
@@ -11,18 +18,25 @@ export default function Header(props) {
           className="header__logo"
         />
       </a>
+
       <div className="header__container">
         <Switch>
           <Route exact path="/">
-            <p className="header__email">{props.email}</p>
-            <nav onClick={props.logout}>
-              <Link
-                to={"/sign-in"}
-                className="header__link header__link_type_exit"
-              >
-                Выйти
-              </Link>
-            </nav>
+            {width < 418 ? (
+              <Link to={"/menu"} className="header__menu-button" ></Link>
+            ) : (
+              <>
+                <p className="header__email">{props.email}</p>
+                <nav onClick={props.logout}>
+                  <Link
+                    to={"/sign-in"}
+                    className="header__link header__link_type_exit"
+                  >
+                    Выйти
+                  </Link>
+                </nav>
+              </>
+            )}
           </Route>
           <Route exact path="/sign-in">
             <nav>

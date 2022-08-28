@@ -18,17 +18,17 @@ export default function Login(props) {
     setPassword("");
   }
   return (
-    <section className="login">
-      <h2 className="login__title">Вход</h2>
+    <section className="entrance-pages">
+      <h2 className="entrance-pages__title">Вход</h2>
       <form
-        className="login__form"
+        className="entrance-pages__form"
         name="login"
         id="loginform"
         onSubmit={handleSubmit}
       >
         <input
           id="login-email"
-          className="login__input login__input_named_email"
+          className="entrance-pages__input login__input_named_email"
           type="email"
           placeholder="Email"
           required
@@ -39,7 +39,7 @@ export default function Login(props) {
         />
         <input
           id="login-password"
-          className="login__input login__input_named_password"
+          className="entrance-pages__input login__input_named_password"
           type="password"
           placeholder="Пароль"
           required
@@ -48,7 +48,7 @@ export default function Login(props) {
           value={password || ""}
           onChange={handleChange}
         />
-        <button className="login__submit-button" type="submit">
+        <button className="entrance-pages__submit-button" type="submit">
           Войти
         </button>
       </form>

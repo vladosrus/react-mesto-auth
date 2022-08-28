@@ -1,9 +1,0 @@
-.sign-up__link {
-    cursor: pointer;
-    text-decoration: none;
-    color: #ffffff;
-}
-
-.sign-up__link:hover {
-    opacity: 0.6;
-}

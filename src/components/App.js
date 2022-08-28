@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import { Redirect, Route, useHistory, Switch, Link } from "react-router-dom";
+import { Redirect, Route, useHistory, Switch } from "react-router-dom";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -230,7 +230,7 @@ export default function App() {
             onCardLike={handleCardLike}
             onDeleteCardClick={handleDeleteCardClick}
           />
-          
+
           <Route exact path="/sign-up">
             <Register onRegistration={registration} />
           </Route>
