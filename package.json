@@ -1,5 +1,5 @@
 {
-  "homepage": "https://vladosrus.github.io/react-mesto-auth/",
+  "homepage": "",
   "name": "mesto-react",
   "version": "0.1.0",
   "private": true,
@@ -15,7 +15,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && scp -r ./build/* chikovvlad@51.250.24.228:/home/chikovvlad/frontend/build",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "test": "react-scripts test",
