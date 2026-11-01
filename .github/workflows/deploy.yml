@@ -1,0 +1,42 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Сборка и выкат на сервер
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Устанавливаем зависимости
+        run: npm ci
+
+      - name: Собираем проект
+        run: npx react-scripts build
+        env:
+          CI: 'false'
+          GENERATE_SOURCEMAP: 'false'
+
+      - name: Отправляем результат на сервер
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$DEPLOY_SSH_KEY" > "$HOME/.ssh/deploy_key"
+          chmod 600 "$HOME/.ssh/deploy_key"
+          echo "45.135.233.126 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL2/ITDGVDpKjQN/S2k/qXVcZdoUm7X4QBfbPAwbydFG" > "$HOME/.ssh/known_hosts"
+          tar -czf - -C build . | ssh -T -i "$HOME/.ssh/deploy_key" -o BatchMode=yes deployer@45.135.233.126
