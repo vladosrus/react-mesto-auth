@@ -11,7 +11,7 @@ export default function Header(props) {
 
   return (
     <header className="header">
-      <a href="/">
+      <a href={`${process.env.PUBLIC_URL}/`}>
         <img
           src={header__logo}
           alt="Логотип проекта Место Россия"

@@ -1,3 +1,15 @@
+// Наш API отдаёт owner и likes как id, а компоненты ждут объекты с _id
+const normalizeCard = (card) => ({
+  ...card,
+  owner: { _id: card.owner },
+  likes: card.likes.map((_id) => ({ _id })),
+});
+
+const normalize = (data) => {
+  if (Array.isArray(data)) return data.map(normalizeCard);
+  return data && data.owner ? normalizeCard(data) : data;
+};
+
 class Api {
   constructor(options) {
     this._baseURL = options.baseUrl;
@@ -6,7 +18,7 @@ class Api {
 
   _getResponseData(res) {
     if (res.ok) {
-      return res.json();
+      return res.json().then(normalize);
     } else {
       return Promise.reject(`Ошибка: ${res.status}`);
     }
@@ -81,9 +93,8 @@ class Api {
 }
 
 const api = new Api({
-  baseUrl: "https://mesto.nomoreparties.co/v1/cohort-44",
+  baseUrl: "/mesto-api",
   headers: {
-    authorization: "4b7b5dd1-c14a-477d-bd33-50408ed7db39",
     "Content-Type": "application/json",
   },
 });

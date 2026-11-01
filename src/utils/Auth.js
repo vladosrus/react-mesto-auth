@@ -1,4 +1,4 @@
-const baseURL = "https://auth.nomoreparties.co";
+const baseURL = "/mesto-api";
 
 function checkResponse(result) {
   if (result.ok) {
@@ -39,4 +39,5 @@ export function getEmail (token) {
     }
   })
   .then(checkResponse)
+  .then((user) => ({ data: user }))
 }
