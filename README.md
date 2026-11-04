@@ -18,4 +18,4 @@ Frontend будет написан на React'е по методологии О�
 
 **GitHub Pages**
 
-* Посмотреть, как выглядит сайт после завершения этого этапа можно [здесь](https://vladosrus.github.io/react-mesto-auth/)
+* Посмотреть, как выглядит сайт после завершения этого этапа можно [здесь](https://vladislav-chikov-projects.ru/mesto/)
